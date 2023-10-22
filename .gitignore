@@ -3,6 +3,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Debug
+start_preprocessing.sh
+
+# Images
+*.png
+*.html
+
+
 # C extensions
 *.so
 
