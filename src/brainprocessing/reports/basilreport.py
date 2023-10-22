@@ -57,14 +57,17 @@ def writeContourImage(bg_img_filename, contour_img_filename, png_file, levellist
     mycanvas.savefig(png_file)
 
 
-def createStructRegSection(doc,basildebugdir,titles,imagedir):
+def createStructRegSection(doc,datadir,titles,imagedir):
 
-    struct=os.path.join(basildebugdir,'struc.nii.gz')
-    struct_bet_mask=os.path.join(basildebugdir,'struc_bet_mask.nii.gz')
+    if not os.path.exists(imagedir):
+        os.makedirs(imagedir)
+
+    struct=os.path.join(datadir,'struc.nii.gz')
+    struct_bet_mask=os.path.join(datadir,'struc_bet_mask.nii.gz')
     image1=os.path.join(imagedir,'bet2struct.png')
-    calib=os.path.join(basildebugdir,'calib_struc.nii.gz')
+    calib=os.path.join(datadir,'calib_struc.nii.gz')
     image2=os.path.join(imagedir,'calib2struct.png')
-    asl=os.path.join(basildebugdir,'asl2struct.nii.gz')
+    asl=os.path.join(datadir,'asl2struct.nii.gz')
     image3=os.path.join(imagedir,'asl2struct.png')
 
     writeContourImage(struct,struct_bet_mask,image1)
@@ -80,7 +83,7 @@ def createStructRegSection(doc,basildebugdir,titles,imagedir):
     return doc
 
 
-def createProcReport(stylesheet, imagedir, outputdir, title):
+def createProcReport(stylesheet, imagedir, datadir, title):
     """
     Main Function reate the
 
@@ -97,7 +100,7 @@ def createProcReport(stylesheet, imagedir, outputdir, title):
     doc += hr()
     doc = create_section(doc, 'structuralreg', None, 'Structural Registration')
     doc += hr()
-    doc = createStructRegSection(doc, outputdir, ['bet2struct','calib2struct', 'asl2struct'],imagedir)
+    doc = createStructRegSection(doc, datadir, ['bet2struct','calib2struct', 'asl2struct'],imagedir)
 
     return doc
 
