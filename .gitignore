@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 # Debug
-start_preprocessing.sh
+start_brainprocessing.sh
 
 # Images
 *.png
