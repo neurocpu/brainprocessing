@@ -41,6 +41,23 @@ def add_image(doc, divid, divclass, captiontext, image):
             img(src=image)
     return doc
 
+def writeContourImageSequence(contour_img_filename, png_file, levellist=[0.5],colors=['r','g','b','y','m','c']):
+    contour_img = nibabel.load(contour_img_filename)
+    if len(contour_img.header.get_data_shape()) > 3:
+        contour_list = nibabel.funcs.four_to_three(contour_img)
+        contour_bg_img = contour_list[0]
+
+        mycanvas=plotting.plot_anat(contour_bg_img)
+
+        colorcount=0
+        colorsize=len(colors)
+        for contour_img in contour_list[1:]:
+            colornum=colorcount%colorsize
+            mycanvas.add_contours(contour_img,levels=levellist,colors=colors[colornum])
+            colorcount=colorcount+1
+            
+        mycanvas.savefig(png_file)
+
 def writeContourImage(bg_img_filename, contour_img_filename, png_file, levellist=[0.5],colors='r'):
     bg_img = nibabel.load(bg_img_filename)
     if len(bg_img.header.get_data_shape()) > 3:
@@ -56,6 +73,25 @@ def writeContourImage(bg_img_filename, contour_img_filename, png_file, levellist
     mycanvas.add_contours(contour_img,levels=levellist,colors=colors)
     mycanvas.savefig(png_file)
 
+def createMotionSection(doc,datadir,titles,imagedir):
+
+    if not os.path.exists(imagedir):
+        os.makedirs(imagedir)
+        
+    asldatapre=os.path.join(datadir,'asldata_orig.nii.gz')
+    image1=os.path.join(imagedir,'asldatapre.png')
+    asldatapost=os.path.join(datadir,'asldata.nii.gz')
+    image2=os.path.join(imagedir,'asldatapost.png')
+
+    writeContourImageSequence(asldatapre,image1, levellist=[10,20,50,100])
+    writeContourImageSequence(asldatapost,image2, levellist=[10,20,50,100])
+
+    doc = add_image(doc, titles[0], None, 'pre motion corr', image1)
+
+    doc = add_image(doc, titles[1], None, 'post motion corr', image2)
+
+
+    return doc
 
 def createStructRegSection(doc,datadir,titles,imagedir):
 
@@ -97,10 +133,21 @@ def createProcReport(stylesheet, imagedir, datadir, title):
             with nested:
                 for i in ['bet2struct', 'calib2struct','asl2struct']:
                     li(a(i.title(), href='#%s' % i))
+            li(a('Motion QC',href='#motionqc'))
+            nested=ul()
+            with nested:
+                for i in [ 'asldata_pre', 'asldata_post']:
+                    li(a(i.title(), href='#%s' % i))
+
     doc += hr()
     doc = create_section(doc, 'structuralreg', None, 'Structural Registration')
     doc += hr()
     doc = createStructRegSection(doc, datadir, ['bet2struct','calib2struct', 'asl2struct'],imagedir)
+    doc += hr()
+    doc = create_section(doc, 'motionqc', None, 'Motion QC')
+    doc += hr()
+    doc = createMotionSection(doc, datadir, [ 'asldata_pre', 'asldata_post'],imagedir)
+
 
     return doc
 

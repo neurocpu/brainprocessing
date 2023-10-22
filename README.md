@@ -29,3 +29,25 @@ python ../src/brainprocessing/reports/basilreport.py ./style.css ./images ./data
 In this section you will make a change to the repository. You can add new modules to the package, or update the documentation or add new documentation. The steps to perform will be shown using the command line but they can also be replicated using a GUI in a development environment like `Visual Code` or `Github Desktop Client` 
 
 * First thing you will want to do is create a branch so that you can isolate your development work from the main branch.
+
+
+## Feature Branch
+We will begin work on a feature that adds a motion section to the QC report. The development for this feature will be maintained in a new branch `motionqc`. 
+
+* Bring any development changes that have happened into scope by doing: 
+```
+git fetch 
+```
+
+* Start a new branch as follows:
+
+```
+git checkout -b motionqc
+```
+
+* Complete development and push the branch to remote
+```
+git add .
+git commit -m "Begin motion qc feature"
+git push -u origin motionqc
+```
